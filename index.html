@@ -49,6 +49,9 @@
             <p class="text-slate-500 mt-2">Consultez les temps d'attente en temps réel pour n'importe quel arrêt à Madrid.</p>
         </header>
 
+        <!-- Section des favoris -->
+        <section id="favorites-container" class="mb-8"></section>
+
         <!-- Formulaire de recherche -->
         <form id="stop-form" class="mb-8 max-w-lg mx-auto">
             <div class="flex flex-col sm:flex-row items-center gap-2 shadow-lg rounded-lg p-2 bg-white">
@@ -63,7 +66,7 @@
         <main id="results-container">
             <!-- Message initial -->
             <div id="initial-message" class="text-center text-slate-500 py-12">
-                <p>Veuillez entrer un numéro d'arrêt pour commencer.</p>
+                <p>Veuillez entrer un numéro d'arrêt pour commencer ou choisir un favori.</p>
             </div>
             
             <!-- Indicateur de chargement -->
@@ -76,17 +79,13 @@
             </div>
 
             <!-- Message d'erreur -->
-            <div id="error-message" class="hidden text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                <!-- Le message d'erreur sera injecté ici -->
-            </div>
+            <div id="error-message" class="hidden text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert"></div>
 
             <!-- Informations sur l'arrêt -->
             <div id="stop-info" class="mb-6"></div>
 
             <!-- Cartes des bus -->
-            <div id="bus-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                <!-- Les cartes de bus seront injectées ici par JavaScript -->
-            </div>
+            <div id="bus-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"></div>
         </main>
         
         <footer class="text-center mt-12 text-sm text-slate-400">
@@ -99,6 +98,7 @@
     <script>
         // --- LOGIQUE JAVASCRIPT ---
 
+        // Éléments du DOM
         const stopForm = document.getElementById('stop-form');
         const stopInput = document.getElementById('stop-number-input');
         const initialMessage = document.getElementById('initial-message');
@@ -106,7 +106,81 @@
         const errorMessageDiv = document.getElementById('error-message');
         const stopInfoDiv = document.getElementById('stop-info');
         const busCardsDiv = document.getElementById('bus-cards');
+        const favoritesContainer = document.getElementById('favorites-container');
+        
+        let currentStop = null; // Pour garder en mémoire l'arrêt actuellement affiché
 
+        // --- Fonctions de gestion des favoris ---
+        const getFavorites = () => JSON.parse(localStorage.getItem('emtFavorites')) || [];
+
+        const saveFavorites = (favorites) => localStorage.setItem('emtFavorites', JSON.stringify(favorites));
+
+        const isFavorite = (stopId) => {
+            const favorites = getFavorites();
+            return favorites.some(fav => fav.id === stopId);
+        };
+
+        const toggleFavorite = () => {
+            if (!currentStop) return;
+            const favorites = getFavorites();
+            if (isFavorite(currentStop.id)) {
+                // Retirer des favoris
+                const newFavorites = favorites.filter(fav => fav.id !== currentStop.id);
+                saveFavorites(newFavorites);
+            } else {
+                // Ajouter aux favoris
+                favorites.push(currentStop);
+                saveFavorites(favorites);
+            }
+            renderFavorites();
+            renderFavoriteButton(); // Mettre à jour le bouton de l'arrêt actuel
+        };
+
+        const renderFavorites = () => {
+            const favorites = getFavorites();
+            favoritesContainer.innerHTML = ''; // Vider le conteneur
+
+            if (favorites.length > 0) {
+                let favoritesHtml = `<h2 class="text-xl font-bold mb-3 text-slate-700">Arrêts favoris</h2>
+                                     <div class="flex flex-wrap gap-3">`;
+                
+                favorites.forEach(fav => {
+                    favoritesHtml += `
+                        <button onclick="fetchBusTimes('${fav.id}')" class="bg-white text-blue-700 font-semibold py-2 px-4 border border-blue-500 rounded-lg shadow-sm hover:bg-blue-50 transition-colors">
+                            ${fav.id} - ${fav.name}
+                        </button>
+                    `;
+                });
+                favoritesHtml += `</div>`;
+                favoritesContainer.innerHTML = favoritesHtml;
+            }
+        };
+        
+        const renderFavoriteButton = () => {
+            const existingButton = document.getElementById('fav-button');
+            if (existingButton) existingButton.remove();
+            
+            if (!currentStop) return;
+
+            const button = document.createElement('button');
+            button.id = 'fav-button';
+            button.onclick = toggleFavorite;
+            button.className = 'ml-3 p-2 rounded-full hover:bg-yellow-200 transition-colors';
+            
+            const isFav = isFavorite(currentStop.id);
+            button.setAttribute('aria-label', isFav ? 'Retirer des favoris' : 'Ajouter aux favoris');
+            
+            button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${isFav ? 'text-yellow-400' : 'text-slate-400'}" fill="${isFav ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+            `;
+            
+            const stopInfoTitle = stopInfoDiv.querySelector('h2');
+            if(stopInfoTitle) stopInfoTitle.parentElement.appendChild(button);
+        };
+
+        // --- Fonctions de recherche et d'affichage ---
         stopForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const stopId = stopInput.value;
@@ -116,42 +190,42 @@
         });
 
         async function fetchBusTimes(stopId) {
-            // 1. Réinitialiser l'interface et afficher le loader
             initialMessage.classList.add('hidden');
             errorMessageDiv.classList.add('hidden');
             busCardsDiv.innerHTML = '';
             stopInfoDiv.innerHTML = '';
             loader.classList.remove('hidden');
+            currentStop = null; // Réinitialiser l'arrêt actuel
 
-            // 2. Construire l'URL de la page EMT
             const emtUrl = `https://www.emtmadrid.es/PMVVisor/pmv.aspx?stopnum=${stopId}&size=3`;
-            
-            // 3. Utiliser un proxy CORS différent et plus direct ('corsproxy.io').
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(emtUrl)}`;
+            const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${emtUrl}`;
 
             try {
                 const response = await fetch(proxyUrl);
                 if (!response.ok) {
-                    throw new Error(`Le service de récupération a retourné une erreur: ${response.status}. Vérifiez que le numéro d'arrêt est correct.`);
+                    throw new Error(`Le service de récupération a retourné une erreur: ${response.status}.`);
                 }
                 
-                // Ce proxy retourne le HTML directement, pas dans un objet JSON.
+                // ** CORRECTION APPLIQUÉE ICI **
+                // Le proxy peut retourner du HTML directement, et non du JSON.
+                // On traite la réponse comme du texte.
                 const htmlContent = await response.text();
-                
+
                 if (!htmlContent || !htmlContent.includes('<table')) {
-                     throw new Error(`Aucune information trouvée pour l'arrêt ${stopId}. Vérifiez le numéro ou réessayez plus tard.`);
+                    // Si le HTML ne contient pas de tableau, c'est probablement une page d'erreur
+                    // ou un arrêt sans informations.
+                    throw new Error(`Aucune information trouvée pour l'arrêt ${stopId} ou le format de la réponse est incorrect.`);
                 }
 
-                // 4. Parser le HTML reçu pour en extraire les données
                 parseAndDisplayData(htmlContent, stopId);
 
             } catch (error) {
-                // L'erreur "Failed to fetch" est souvent due au proxy ou à un problème réseau.
-                let friendlyMessage = error.message;
-                if (error.name === 'TypeError') { // "Failed to fetch" est un TypeError
-                    friendlyMessage = "La connexion au service de données a échoué. Cela peut être dû à un problème réseau ou au service proxy qui est temporairement hors ligne. Veuillez réessayer.";
+                let msg = error.message;
+                // La cause la plus probable est le proxy qui est hors service
+                if (error.name === 'TypeError') {
+                    msg = "La connexion au service de données a échoué. Le proxy est peut-être hors ligne. Veuillez réessayer.";
                 }
-                showError(friendlyMessage);
+                showError(msg);
             } finally {
                 loader.classList.add('hidden');
             }
@@ -160,93 +234,76 @@
         function parseAndDisplayData(html, stopId) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-
             const table = doc.querySelector('table');
             if (!table) {
-                showError(`L'arrêt ${stopId} semble exister, mais aucun horaire de bus n'est disponible pour le moment.`);
+                showError(`Aucun horaire n'est disponible pour l'arrêt ${stopId}.`);
                 return;
             }
 
-            // Extraction du nom de l'arrêt
             let stopName = `Arrêt ${stopId}`;
             const headerElement = doc.querySelector('b');
-            if (headerElement) {
-                stopName = headerElement.textContent.replace('Parada:', '').trim();
-            }
+            if (headerElement) stopName = headerElement.textContent.replace('Parada:', '').trim();
             
-            // Extraction de l'adresse (souvent sous le nom)
+            currentStop = { id: stopId, name: stopName };
+            
             let address = '';
-            const allTextNodes = Array.from(doc.body.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
-            if (allTextNodes.length > 1) {
-                address = allTextNodes[1].textContent.trim();
+            const potentialAddressNode = doc.body.querySelector('b')?.nextSibling;
+            if (potentialAddressNode && potentialAddressNode.nodeType === Node.TEXT_NODE) {
+                address = potentialAddressNode.textContent.trim();
             }
 
-            stopInfoDiv.innerHTML = `
-                <h2 class="text-2xl font-bold text-slate-800">${stopName}</h2>
-                <p class="text-slate-500">${address}</p>
-            `;
+            stopInfoDiv.innerHTML = `<div class="flex items-center">
+                                       <div>
+                                           <h2 class="text-2xl font-bold text-slate-800">${stopName}</h2>
+                                           <p class="text-slate-500">${address}</p>
+                                       </div>
+                                     </div>`;
+            renderFavoriteButton();
 
             const rows = table.querySelectorAll('tr');
             if (rows.length <= 1) {
-                showError(`Aucun bus n'est prévu pour l'arrêt ${stopId} prochainement.`);
+                busCardsDiv.innerHTML = `<p class="text-slate-500 text-center col-span-full">Aucun bus n'est prévu pour cet arrêt prochainement.</p>`;
                 return;
             }
 
             const busData = {};
-
             for (let i = 1; i < rows.length; i++) {
                 const cells = rows[i].querySelectorAll('td');
                 if (cells.length < 3) continue;
-
                 const line = cells[0].textContent.trim();
                 const destination = cells[1].textContent.trim();
                 const time = cells[2].textContent.trim();
-
                 const key = `${line}-${destination}`;
-                if (!busData[key]) {
-                    busData[key] = {
-                        line: line,
-                        destination: destination,
-                        times: []
-                    };
-                }
+                if (!busData[key]) busData[key] = { line, destination, times: [] };
                 busData[key].times.push(time);
             }
-
             displayBusCards(busData);
         }
 
         function displayBusCards(busData) {
             busCardsDiv.innerHTML = ''; 
             let delay = 0;
-
             for (const key in busData) {
                 const info = busData[key];
                 const card = document.createElement('div');
                 card.className = 'card-enter bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105';
                 card.style.animationDelay = `${delay}s`;
-                
                 const nextTime = info.times[0];
                 const otherTimes = info.times.slice(1).join(', ');
-
-                card.innerHTML = `
-                    <div class="p-6">
-                        <div class="flex items-center gap-4">
-                            <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white font-bold text-xl">${info.line}</span>
-                            <div class="flex-1 min-w-0">
-                                <div class="tracking-wide text-sm text-blue-600 font-bold">Ligne ${info.line}</div>
-                                <p class="block mt-1 text-lg leading-tight font-semibold text-black truncate">${info.destination}</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 text-center">
-                            <p class="text-slate-500">Prochain passage dans</p>
-                            <p class="text-5xl font-bold text-slate-800">${nextTime.replace('>', '&gt;')}</p>
-                        </div>
-                        ${otherTimes ? `<div class="mt-4 text-center text-sm text-slate-500">
-                            <span>Suivants: ${otherTimes}</span>
-                        </div>` : ''}
-                    </div>
-                `;
+                card.innerHTML = `<div class="p-6">
+                                    <div class="flex items-center gap-4">
+                                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white font-bold text-xl">${info.line}</span>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="tracking-wide text-sm text-blue-600 font-bold">Ligne ${info.line}</div>
+                                            <p class="block mt-1 text-lg leading-tight font-semibold text-black truncate">${info.destination}</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6 text-center">
+                                        <p class="text-slate-500">Prochain passage dans</p>
+                                        <p class="text-5xl font-bold text-slate-800">${nextTime.replace('>', '&gt;')}</p>
+                                    </div>
+                                    ${otherTimes ? `<div class="mt-4 text-center text-sm text-slate-500"><span>Suivants: ${otherTimes}</span></div>` : ''}
+                                  </div>`;
                 busCardsDiv.appendChild(card);
                 delay += 0.05;
             }
@@ -256,6 +313,9 @@
             errorMessageDiv.textContent = message;
             errorMessageDiv.classList.remove('hidden');
         }
+
+        // Initialisation de l'application
+        document.addEventListener('DOMContentLoaded', renderFavorites);
     </script>
 </body>
 </html>
