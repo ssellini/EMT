@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horaires Bus EMT Madrid - Interface Moderne</title>
+    
+    <!-- Utilisation de Tailwind CSS pour un design rapide et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Police Google Fonts pour un look plus propre -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Styles personnalisés */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Animation simple pour l'apparition des cartes */
+        .card-enter {
+            animation: card-enter 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes card-enter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <!-- En-tête de l'application -->
+        <header class="text-center mb-8">
+            <div class="flex justify-center items-center gap-4">
+                <svg class="w-12 h-12 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5v-1.875a3.375 3.375 0 003.375-3.375h1.5a1.125 1.125 0 011.125 1.125v-1.5a3.375 3.375 0 00-3.375-3.375H3.375" />
+                </svg>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Horaires des Bus EMT</h1>
+            </div>
+            <p class="text-slate-500 mt-2">Consultez les temps d'attente en temps réel pour n'importe quel arrêt à Madrid.</p>
+        </header>
+
+        <!-- Formulaire de recherche -->
+        <form id="stop-form" class="mb-8 max-w-lg mx-auto">
+            <div class="flex flex-col sm:flex-row items-center gap-2 shadow-lg rounded-lg p-2 bg-white">
+                <input type="number" id="stop-number-input" placeholder="Entrez le numéro de l'arrêt (ex: 5998)" required class="w-full sm:flex-1 appearance-none bg-transparent border-none text-lg text-slate-700 placeholder-slate-400 py-3 px-4 focus:outline-none">
+                <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-md hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Rechercher
+                </button>
+            </div>
+        </form>
+
+        <!-- Conteneur pour les résultats -->
+        <main id="results-container">
+            <!-- Message initial -->
+            <div id="initial-message" class="text-center text-slate-500 py-12">
+                <p>Veuillez entrer un numéro d'arrêt pour commencer.</p>
+            </div>
+            
+            <!-- Indicateur de chargement -->
+            <div id="loader" class="hidden text-center py-12">
+                <svg class="animate-spin h-8 w-8 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-4 text-slate-600">Recherche des horaires...</p>
+            </div>
+
+            <!-- Message d'erreur -->
+            <div id="error-message" class="hidden text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                <!-- Le message d'erreur sera injecté ici -->
+            </div>
+
+            <!-- Informations sur l'arrêt -->
+            <div id="stop-info" class="mb-6"></div>
+
+            <!-- Cartes des bus -->
+            <div id="bus-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <!-- Les cartes de bus seront injectées ici par JavaScript -->
+            </div>
+        </main>
+        
+        <footer class="text-center mt-12 text-sm text-slate-400">
+            <p>Données fournies par EMT Madrid. Interface créée par Gemini.</p>
+            <p class="mt-1"><strong>Note :</strong> Cette application utilise le "web scraping" et peut cesser de fonctionner si le site de l'EMT est mis à jour.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- LOGIQUE JAVASCRIPT ---
+
+        const stopForm = document.getElementById('stop-form');
+        const stopInput = document.getElementById('stop-number-input');
+        const initialMessage = document.getElementById('initial-message');
+        const loader = document.getElementById('loader');
+        const errorMessageDiv = document.getElementById('error-message');
+        const stopInfoDiv = document.getElementById('stop-info');
+        const busCardsDiv = document.getElementById('bus-cards');
+
+        stopForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const stopId = stopInput.value;
+            if (stopId) {
+                fetchBusTimes(stopId);
+            }
+        });
+
+        async function fetchBusTimes(stopId) {
+            // 1. Réinitialiser l'interface et afficher le loader
+            initialMessage.classList.add('hidden');
+            errorMessageDiv.classList.add('hidden');
+            busCardsDiv.innerHTML = '';
+            stopInfoDiv.innerHTML = '';
+            loader.classList.remove('hidden');
+
+            // 2. Construire l'URL de la page EMT
+            const emtUrl = `https://www.emtmadrid.es/PMVVisor/pmv.aspx?stopnum=${stopId}&size=3`;
+            
+            // 3. Utiliser un proxy CORS différent et plus direct ('corsproxy.io').
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(emtUrl)}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    throw new Error(`Le service de récupération a retourné une erreur: ${response.status}. Vérifiez que le numéro d'arrêt est correct.`);
+                }
+                
+                // Ce proxy retourne le HTML directement, pas dans un objet JSON.
+                const htmlContent = await response.text();
+                
+                if (!htmlContent || !htmlContent.includes('<table')) {
+                     throw new Error(`Aucune information trouvée pour l'arrêt ${stopId}. Vérifiez le numéro ou réessayez plus tard.`);
+                }
+
+                // 4. Parser le HTML reçu pour en extraire les données
+                parseAndDisplayData(htmlContent, stopId);
+
+            } catch (error) {
+                // L'erreur "Failed to fetch" est souvent due au proxy ou à un problème réseau.
+                let friendlyMessage = error.message;
+                if (error.name === 'TypeError') { // "Failed to fetch" est un TypeError
+                    friendlyMessage = "La connexion au service de données a échoué. Cela peut être dû à un problème réseau ou au service proxy qui est temporairement hors ligne. Veuillez réessayer.";
+                }
+                showError(friendlyMessage);
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        function parseAndDisplayData(html, stopId) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const table = doc.querySelector('table');
+            if (!table) {
+                showError(`L'arrêt ${stopId} semble exister, mais aucun horaire de bus n'est disponible pour le moment.`);
+                return;
+            }
+
+            // Extraction du nom de l'arrêt
+            let stopName = `Arrêt ${stopId}`;
+            const headerElement = doc.querySelector('b');
+            if (headerElement) {
+                stopName = headerElement.textContent.replace('Parada:', '').trim();
+            }
+            
+            // Extraction de l'adresse (souvent sous le nom)
+            let address = '';
+            const allTextNodes = Array.from(doc.body.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
+            if (allTextNodes.length > 1) {
+                address = allTextNodes[1].textContent.trim();
+            }
+
+            stopInfoDiv.innerHTML = `
+                <h2 class="text-2xl font-bold text-slate-800">${stopName}</h2>
+                <p class="text-slate-500">${address}</p>
+            `;
+
+            const rows = table.querySelectorAll('tr');
+            if (rows.length <= 1) {
+                showError(`Aucun bus n'est prévu pour l'arrêt ${stopId} prochainement.`);
+                return;
+            }
+
+            const busData = {};
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll('td');
+                if (cells.length < 3) continue;
+
+                const line = cells[0].textContent.trim();
+                const destination = cells[1].textContent.trim();
+                const time = cells[2].textContent.trim();
+
+                const key = `${line}-${destination}`;
+                if (!busData[key]) {
+                    busData[key] = {
+                        line: line,
+                        destination: destination,
+                        times: []
+                    };
+                }
+                busData[key].times.push(time);
+            }
+
+            displayBusCards(busData);
+        }
+
+        function displayBusCards(busData) {
+            busCardsDiv.innerHTML = ''; 
+            let delay = 0;
+
+            for (const key in busData) {
+                const info = busData[key];
+                const card = document.createElement('div');
+                card.className = 'card-enter bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105';
+                card.style.animationDelay = `${delay}s`;
+                
+                const nextTime = info.times[0];
+                const otherTimes = info.times.slice(1).join(', ');
+
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex items-center gap-4">
+                            <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white font-bold text-xl">${info.line}</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="tracking-wide text-sm text-blue-600 font-bold">Ligne ${info.line}</div>
+                                <p class="block mt-1 text-lg leading-tight font-semibold text-black truncate">${info.destination}</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-slate-500">Prochain passage dans</p>
+                            <p class="text-5xl font-bold text-slate-800">${nextTime.replace('>', '&gt;')}</p>
+                        </div>
+                        ${otherTimes ? `<div class="mt-4 text-center text-sm text-slate-500">
+                            <span>Suivants: ${otherTimes}</span>
+                        </div>` : ''}
+                    </div>
+                `;
+                busCardsDiv.appendChild(card);
+                delay += 0.05;
+            }
+        }
+        
+        function showError(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
