@@ -1,0 +1,171 @@
+{
+  "version": "1.0",
+  "lastUpdate": "2025-10-24",
+  "stops": [
+    {
+      "id": "5998",
+      "name": "Pº Castellana - General Perón",
+      "address": "Paseo de la Castellana, 143",
+      "latitude": 40.4506,
+      "longitude": -3.6889,
+      "lines": ["27", "40", "147", "150"]
+    },
+    {
+      "id": "72",
+      "name": "Puerta del Sol",
+      "address": "Puerta del Sol",
+      "latitude": 40.4169,
+      "longitude": -3.7035,
+      "lines": ["3", "50", "51", "52", "53"]
+    },
+    {
+      "id": "458",
+      "name": "Plaza de España",
+      "address": "Plaza de España",
+      "latitude": 40.4238,
+      "longitude": -3.7122,
+      "lines": ["1", "2", "44", "46", "74", "133"]
+    },
+    {
+      "id": "628",
+      "name": "Atocha Renfe",
+      "address": "Glorieta de Atocha",
+      "latitude": 40.4068,
+      "longitude": -3.6919,
+      "lines": ["10", "14", "24", "26", "32", "37"]
+    },
+    {
+      "id": "1221",
+      "name": "Plaza de Cibeles",
+      "address": "Plaza de Cibeles",
+      "latitude": 40.4189,
+      "longitude": -3.6936,
+      "lines": ["1", "2", "5", "9", "10", "14", "15"]
+    },
+    {
+      "id": "2819",
+      "name": "Gran Vía - Red de San Luis",
+      "address": "Gran Vía, 54",
+      "latitude": 40.4216,
+      "longitude": -3.7021,
+      "lines": ["1", "2", "46", "74", "146"]
+    },
+    {
+      "id": "3523",
+      "name": "Moncloa",
+      "address": "Intercambiador de Moncloa",
+      "latitude": 40.4336,
+      "longitude": -3.7177,
+      "lines": ["16", "61", "82", "83", "132", "133"]
+    },
+    {
+      "id": "4210",
+      "name": "Retiro",
+      "address": "Parque del Retiro",
+      "latitude": 40.4153,
+      "longitude": -3.6844,
+      "lines": ["2", "15", "20", "28", "52", "63"]
+    },
+    {
+      "id": "1589",
+      "name": "Santiago Bernabéu",
+      "address": "Paseo de la Castellana, 140",
+      "latitude": 40.4530,
+      "longitude": -3.6884,
+      "lines": ["14", "27", "40", "43", "120", "126"]
+    },
+    {
+      "id": "2134",
+      "name": "Plaza Mayor",
+      "address": "Plaza Mayor",
+      "latitude": 40.4155,
+      "longitude": -3.7074,
+      "lines": ["3", "17", "18", "23", "31", "35", "50"]
+    },
+    {
+      "id": "3782",
+      "name": "Príncipe Pío",
+      "address": "Estación de Príncipe Pío",
+      "latitude": 40.4198,
+      "longitude": -3.7183,
+      "lines": ["25", "33", "39", "41", "46", "75"]
+    },
+    {
+      "id": "892",
+      "name": "Aeropuerto T4",
+      "address": "Terminal T4",
+      "latitude": 40.4936,
+      "longitude": -3.5673,
+      "lines": ["200", "101"]
+    },
+    {
+      "id": "1473",
+      "name": "Plaza de Castilla",
+      "address": "Plaza de Castilla",
+      "latitude": 40.4657,
+      "longitude": -3.6887,
+      "lines": ["5", "27", "42", "66", "67", "124", "129"]
+    },
+    {
+      "id": "2956",
+      "name": "Callao",
+      "address": "Plaza del Callao",
+      "latitude": 40.4202,
+      "longitude": -3.7054,
+      "lines": ["1", "2", "3", "46", "74", "75", "146"]
+    },
+    {
+      "id": "5124",
+      "name": "Ciudad Universitaria",
+      "address": "Avenida Complutense",
+      "latitude": 40.4468,
+      "longitude": -3.7289,
+      "lines": ["46", "82", "83", "132", "133"]
+    },
+    {
+      "id": "731",
+      "name": "Tribunal",
+      "address": "Calle de Fuencarral",
+      "latitude": 40.4263,
+      "longitude": -3.7014,
+      "lines": ["3", "37", "40", "149"]
+    },
+    {
+      "id": "4582",
+      "name": "Nuevos Ministerios",
+      "address": "Paseo de la Castellana, 67",
+      "latitude": 40.4464,
+      "longitude": -3.6926,
+      "lines": ["5", "7", "14", "27", "40", "147", "150"]
+    },
+    {
+      "id": "2847",
+      "name": "Goya",
+      "address": "Calle de Goya",
+      "latitude": 40.4263,
+      "longitude": -3.6773,
+      "lines": ["15", "21", "29", "52", "53", "146"]
+    },
+    {
+      "id": "1892",
+      "name": "Méndez Álvaro",
+      "address": "Estación Sur de Autobuses",
+      "latitude": 40.3987,
+      "longitude": -3.6857,
+      "lines": ["8", "10", "18", "19", "24", "54", "57"]
+    },
+    {
+      "id": "3341",
+      "name": "Ventas",
+      "address": "Plaza de Toros de Las Ventas",
+      "latitude": 40.4316,
+      "longitude": -3.6656,
+      "lines": ["12", "21", "38", "53", "106", "110", "146"]
+    }
+  ],
+  "info": {
+    "description": "Base de données des arrêts EMT Madrid populaires avec coordonnées GPS",
+    "source": "Données approximatives pour démonstration",
+    "note": "Pour une base complète, utiliser l'API officielle EMT Madrid"
+  }
+}

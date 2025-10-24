@@ -1,0 +1,23 @@
+# robots.txt pour EMT Madrid Bus Schedule
+# https://ssellini.github.io/EMT/
+
+User-agent: *
+Allow: /
+
+# Fichiers et dossiers à ne pas indexer
+Disallow: /js/
+Disallow: /css/
+Disallow: /data/
+Disallow: /.github/
+Disallow: /icons/generate-icons.py
+
+# Autoriser les fichiers importants
+Allow: /index.html
+Allow: /manifest.json
+Allow: /icons/icon.svg
+
+# Crawl delay (optionnel)
+# Crawl-delay: 1
+
+# Sitemap (à créer si nécessaire)
+# Sitemap: https://ssellini.github.io/EMT/sitemap.xml

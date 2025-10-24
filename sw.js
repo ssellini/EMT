@@ -13,6 +13,7 @@ const STATIC_ASSETS = [
     './js/api.js',
     './js/favorites.js',
     './js/utils.js',
+    './data/stops.json',
     './manifest.json',
     'https://cdn.tailwindcss.com',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap'
