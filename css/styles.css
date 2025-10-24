@@ -1,0 +1,175 @@
+/* Styles personnalisés pour EMT Madrid */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Animation pour l'apparition des cartes */
+.card-enter {
+    animation: card-enter 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes card-enter {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Classes utilitaires pour accessibilité */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Mode sombre */
+.dark {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+.dark .bg-slate-50 {
+    background-color: #0f172a;
+}
+
+.dark .bg-white {
+    background-color: #1e293b;
+}
+
+.dark .text-slate-800 {
+    color: #e2e8f0;
+}
+
+.dark .text-slate-900 {
+    color: #f1f5f9;
+}
+
+.dark .text-slate-500 {
+    color: #94a3b8;
+}
+
+.dark .text-slate-400 {
+    color: #cbd5e1;
+}
+
+.dark .text-black {
+    color: #f1f5f9;
+}
+
+.dark .border-slate-200 {
+    border-color: #334155;
+}
+
+.dark .shadow-md,
+.dark .shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Indicateur de mise à jour */
+.update-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Bouton de rafraîchissement */
+.refresh-btn {
+    transition: transform 0.3s ease;
+}
+
+.refresh-btn:active {
+    transform: rotate(180deg);
+}
+
+/* Amélioration du focus pour l'accessibilité */
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1e293b;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.dark .toast {
+    background: #334155;
+}
+
+/* Loading skeleton */
+.skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+.dark .skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Amélioration des boutons favoris */
+.favorite-btn {
+    transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+    .card-enter {
+        animation-delay: 0s !important;
+    }
+}
