@@ -384,7 +384,7 @@ function setupKeyboardShortcuts() {
 async function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         try {
-            const registration = await navigator.serviceWorker.register('/sw.js');
+            const registration = await navigator.serviceWorker.register('./sw.js');
             console.log('Service Worker enregistré:', registration);
         } catch (error) {
             console.error('Erreur lors de l\'enregistrement du Service Worker:', error);

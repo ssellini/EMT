@@ -90,6 +90,20 @@ php -S localhost:8000
 
 Puis ouvrez http://localhost:8000 dans votre navigateur.
 
+### Déploiement sur GitHub Pages 🌐
+
+L'application est prête pour être déployée gratuitement sur GitHub Pages !
+
+**Déploiement automatique** (recommandé) :
+1. Fusionner votre branche sur `main`
+2. Aller dans **Settings** → **Pages**
+3. Sélectionner **Source**: **GitHub Actions**
+4. Pusher sur `main` - le déploiement se fait automatiquement !
+
+**URL du site** : `https://ssellini.github.io/EMT/`
+
+📖 **Guide complet** : Voir [DEPLOY.md](./DEPLOY.md) pour les instructions détaillées
+
 ### Utilisation
 
 1. **Rechercher un arrêt**

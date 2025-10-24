@@ -263,8 +263,8 @@ const Notifications = {
         if (!hasPermission) return;
 
         const notification = new Notification(title, {
-            icon: '/icons/icon-192.png',
-            badge: '/icons/icon-192.png',
+            icon: './icons/icon-192.png',
+            badge: './icons/icon-192.png',
             ...options
         });
 

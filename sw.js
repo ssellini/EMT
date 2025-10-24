@@ -6,14 +6,14 @@ const DYNAMIC_CACHE_NAME = 'emt-dynamic-v1';
 
 // Assets statiques à mettre en cache
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/css/styles.css',
-    '/js/app.js',
-    '/js/api.js',
-    '/js/favorites.js',
-    '/js/utils.js',
-    '/manifest.json',
+    './',
+    './index.html',
+    './css/styles.css',
+    './js/app.js',
+    './js/api.js',
+    './js/favorites.js',
+    './js/utils.js',
+    './manifest.json',
     'https://cdn.tailwindcss.com',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap'
 ];
