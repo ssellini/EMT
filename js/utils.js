@@ -217,22 +217,173 @@ const Geolocation = {
         });
     },
 
+    /**
+     * Calculer la distance entre deux points GPS (formule de Haversine)
+     * @returns distance en kilomètres
+     */
+    calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Rayon de la Terre en km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    },
+
     async findNearbyStops() {
         try {
             showToast('Recherche de votre position...', 'info');
             const position = await this.getCurrentPosition();
             const { latitude, longitude } = position.coords;
 
-            // Note: L'API EMT ne fournit pas de service de recherche par géolocalisation public
-            // Cette fonctionnalité nécessiterait une API backend ou un service tiers
-            showToast('Fonctionnalité de recherche d\'arrêts proches en développement', 'info');
+            console.log('Position actuelle:', latitude, longitude);
 
-            console.log('Position:', latitude, longitude);
-            // TODO: Implémenter la recherche d'arrêts proches
+            // Charger la base de données des arrêts
+            showToast('Recherche des arrêts proches...', 'info');
+            const response = await fetch('./data/stops.json');
+            if (!response.ok) {
+                throw new Error('Impossible de charger la base de données des arrêts');
+            }
+
+            const data = await response.json();
+            const stops = data.stops;
+
+            // Calculer la distance pour chaque arrêt
+            const stopsWithDistance = stops.map(stop => ({
+                ...stop,
+                distance: this.calculateDistance(latitude, longitude, stop.latitude, stop.longitude)
+            }));
+
+            // Trier par distance
+            stopsWithDistance.sort((a, b) => a.distance - b.distance);
+
+            // Prendre les 5 plus proches
+            const nearbyStops = stopsWithDistance.slice(0, 5);
+
+            // Afficher les résultats
+            this.displayNearbyStops(nearbyStops);
+            showToast(`${nearbyStops.length} arrêts trouvés à proximité`, 'success');
+
         } catch (error) {
             console.error('Erreur de géolocalisation:', error);
             showToast(error.message, 'error');
         }
+    },
+
+    displayNearbyStops(stops) {
+        // Créer ou mettre à jour la section des arrêts proches
+        let container = document.getElementById('nearby-stops-container');
+
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'nearby-stops-container';
+            container.className = 'mb-8';
+
+            // Insérer après les favoris
+            const favContainer = document.getElementById('favorites-container');
+            if (favContainer && favContainer.nextSibling) {
+                favContainer.parentNode.insertBefore(container, favContainer.nextSibling);
+            } else {
+                document.querySelector('.container').insertBefore(
+                    container,
+                    document.getElementById('history-container')
+                );
+            }
+        }
+
+        let html = `
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-6 shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                            📍 Arrêts à proximité
+                        </h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            Basé sur votre position actuelle
+                        </p>
+                    </div>
+                    <button
+                        onclick="document.getElementById('nearby-stops-container').remove()"
+                        class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-2xl leading-none"
+                        aria-label="Fermer"
+                        title="Fermer">
+                        ×
+                    </button>
+                </div>
+                <div class="space-y-3">
+        `;
+
+        stops.forEach((stop, index) => {
+            const distanceText = stop.distance < 1
+                ? `${Math.round(stop.distance * 1000)} m`
+                : `${stop.distance.toFixed(1)} km`;
+
+            html += `
+                <div class="bg-white dark:bg-slate-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold">
+                                    ${index + 1}
+                                </span>
+                                <h3 class="font-bold text-slate-800 dark:text-slate-100">
+                                    Arrêt ${stop.id}
+                                </h3>
+                                <span class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full font-semibold">
+                                    ${distanceText}
+                                </span>
+                            </div>
+                            <p class="text-slate-700 dark:text-slate-200 font-medium">
+                                ${stop.name}
+                            </p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">
+                                ${stop.address}
+                            </p>
+                            ${stop.lines && stop.lines.length > 0 ? `
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    ${stop.lines.slice(0, 5).map(line =>
+                                        `<span class="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
+                                            ${line}
+                                        </span>`
+                                    ).join('')}
+                                    ${stop.lines.length > 5 ? `
+                                        <span class="text-xs px-2 py-0.5 text-slate-500 dark:text-slate-400">
+                                            +${stop.lines.length - 5}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <button
+                            onclick="window.App.searchStop('${stop.id}')"
+                            class="shrink-0 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            aria-label="Consulter l'arrêt ${stop.id}">
+                            Voir horaires
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+                <div class="mt-4 text-center">
+                    <button
+                        onclick="window.Utils.Geolocation.findNearbyStops()"
+                        class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                        🔄 Actualiser la position
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+
+        // Scroll vers les résultats
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 };
 
