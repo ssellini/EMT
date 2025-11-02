@@ -9,7 +9,29 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="EMT Madrid">
 
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.codetabs.com https://api.allorigins.win https://corsproxy.io https://www.emtmadrid.es; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
     <title>Horaires Bus EMT Madrid - Interface Moderne</title>
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ssellini.github.io/EMT/">
+    <meta property="og:title" content="Horaires Bus EMT Madrid - Temps Réel">
+    <meta property="og:description" content="Consultez les temps d'attente en temps réel pour les bus EMT de Madrid. Application PWA moderne avec favoris, mode sombre et rafraîchissement automatique.">
+    <meta property="og:image" content="https://ssellini.github.io/EMT/icons/icon-512.png">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="EMT Madrid">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Horaires Bus EMT Madrid - Temps Réel">
+    <meta name="twitter:description" content="Application PWA pour consulter les horaires des bus EMT de Madrid en temps réel">
+    <meta name="twitter:image" content="https://ssellini.github.io/EMT/icons/icon-512.png">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
@@ -19,6 +41,8 @@
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
 
     <!-- Tailwind CSS -->
+    <!-- Note: SRI non disponible pour Tailwind CDN (contenu dynamique) -->
+    <!-- TODO Phase 2: Migrer vers build Tailwind locale pour meilleure sécurité -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Google Fonts -->
@@ -34,6 +58,43 @@
         tailwind.config = {
             darkMode: 'class'
         }
+    </script>
+
+    <!-- Structured Data pour SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Horaires Bus EMT Madrid",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "url": "https://ssellini.github.io/EMT/",
+        "description": "Application web progressive pour consulter les horaires des bus EMT de Madrid en temps réel. Fonctionnalités: favoris, mode sombre, rafraîchissement automatique, mode hors ligne.",
+        "author": {
+            "@type": "Person",
+            "name": "Mohamed Sofien Sellini",
+            "email": "mohamedsofiensellini@gmail.com"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        },
+        "featureList": [
+            "Horaires en temps réel",
+            "Gestion des favoris",
+            "Mode sombre",
+            "Progressive Web App",
+            "Mode hors ligne",
+            "Rafraîchissement automatique",
+            "Géolocalisation"
+        ],
+        "screenshot": "https://ssellini.github.io/EMT/icons/screenshot-desktop.png",
+        "softwareVersion": "2.0.0",
+        "datePublished": "2025-10-24",
+        "inLanguage": "fr-FR"
+    }
     </script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">

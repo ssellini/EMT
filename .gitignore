@@ -32,3 +32,16 @@ build/
 tmp/
 temp/
 *.tmp
+
+# Tests et couverture
+coverage/
+.nyc_output/
+*.lcov
+
+# Lock files (garder seulement un type)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# ESLint cache
+.eslintcache

@@ -1,0 +1,40 @@
+{
+  "name": "emt-madrid",
+  "version": "2.0.0",
+  "description": "Application web progressive pour consulter les horaires des bus EMT de Madrid en temps réel",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "dev": "python3 -m http.server 8000",
+    "lint": "eslint js/**/*.js",
+    "format": "prettier --write \"**/*.{js,json,md,css,html}\""
+  },
+  "keywords": [
+    "emt",
+    "madrid",
+    "bus",
+    "transport",
+    "pwa",
+    "horaires",
+    "temps-reel"
+  ],
+  "author": "Mohamed Sofien Sellini <mohamedsofiensellini@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.55.0",
+    "happy-dom": "^12.10.3",
+    "prettier": "^3.1.1",
+    "vitest": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssellini/EMT.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ssellini/EMT/issues"
+  },
+  "homepage": "https://ssellini.github.io/EMT/"
+}
