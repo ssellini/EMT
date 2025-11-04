@@ -313,34 +313,34 @@ function displayBusCards(busData) {
         card.setAttribute('data-urgency', urgency);
 
         card.innerHTML = `
-            <div class="p-6">
+            <div class="p-4 sm:p-6">
                 <!-- Header avec ligne et destination -->
-                <div class="flex items-start justify-between gap-4 mb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full ${colors.bg} text-white font-bold text-xl shadow-lg" aria-hidden="true">
+                <div class="flex items-start justify-between gap-2 sm:gap-4 mb-4">
+                    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <span class="inline-flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full ${colors.bg} text-white font-bold text-lg sm:text-xl shadow-lg flex-shrink-0" aria-hidden="true">
                             ${info.line}
                         </span>
                         <div class="flex-1 min-w-0">
-                            <div class="tracking-wide text-xs ${colors.text} font-bold uppercase">
+                            <div class="tracking-wide text-[10px] sm:text-xs ${colors.text} font-bold uppercase">
                                 Ligne ${info.line}
                             </div>
-                            <p class="block mt-0.5 text-base leading-tight font-semibold text-slate-800 dark:text-slate-100 truncate" title="${info.destination}">
+                            <p class="block mt-0.5 text-sm sm:text-base leading-tight font-semibold text-slate-800 dark:text-slate-100 truncate" title="${info.destination}">
                                 ${info.destination}
                             </p>
                         </div>
                     </div>
                     <!-- Badge de fréquence -->
                     ${frequency >= 2 ? `
-                        <span class="text-xs px-2 py-1 ${colors.badge} rounded-full font-semibold whitespace-nowrap">
-                            ${colors.icon} ${frequencyLabel}
+                        <span class="text-[10px] sm:text-xs px-2 py-1 ${colors.badge} rounded-full font-semibold whitespace-nowrap flex-shrink-0">
+                            <span class="hidden sm:inline">${colors.icon} </span>${frequencyLabel}
                         </span>
                     ` : ''}
                 </div>
 
                 <!-- Temps principal -->
-                <div class="text-center py-4 mb-4 ${colors.badge} rounded-lg">
-                    <p class="text-sm ${colors.text} font-medium mb-1">Prochain passage</p>
-                    <p class="text-4xl font-bold ${colors.text}" aria-label="${nextTime}">
+                <div class="text-center py-3 sm:py-4 mb-3 sm:mb-4 ${colors.badge} rounded-lg">
+                    <p class="text-xs sm:text-sm ${colors.text} font-medium mb-1">Prochain passage</p>
+                    <p class="text-3xl sm:text-4xl font-bold ${colors.text}" aria-label="${nextTime}">
                         ${nextTime.replace('>', '&gt;')}
                     </p>
                     ${urgency === 'critical' ? `
@@ -358,25 +358,25 @@ function displayBusCards(busData) {
                 ${info.times.length > 1 ? `
                     <div class="space-y-2">
                         <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">Passages suivants :</p>
-                        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+                        <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-2 -mx-1 px-1">
                             ${info.times.slice(0, 4).map((time, idx) => {
                                 const mins = extractMinutes(time);
                                 const timeUrgency = getUrgency(mins);
                                 const timeColors = getUrgencyColors(timeUrgency);
 
                                 return `
-                                    <div class="flex flex-col items-center gap-1 min-w-[60px]">
-                                        <div class="w-10 h-10 rounded-full ${timeColors.bg} flex items-center justify-center text-white text-xs font-bold shadow ${idx === 0 ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-800 ' + timeColors.border.replace('border-', 'ring-') : ''}">
+                                    <div class="flex flex-col items-center gap-1 min-w-[45px] sm:min-w-[55px]">
+                                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ${timeColors.bg} flex items-center justify-center text-white text-[10px] sm:text-xs font-bold shadow ${idx === 0 ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-800 ' + timeColors.border.replace('border-', 'ring-') : ''}">
                                             ${time.replace('>', '')}
                                         </div>
                                         ${idx < info.times.length - 1 && idx < 3 ? `
-                                            <div class="h-1 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                            <div class="h-0.5 sm:h-1 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
                                         ` : ''}
                                     </div>
                                 `;
-                            }).join('<div class="text-slate-300 dark:text-slate-600">→</div>')}
+                            }).join('<div class="text-xs sm:text-sm text-slate-300 dark:text-slate-600">→</div>')}
                             ${info.times.length > 4 ? `
-                                <span class="text-xs text-slate-500 dark:text-slate-400 ml-2">
+                                <span class="text-xs text-slate-500 dark:text-slate-400 ml-1 sm:ml-2 flex-shrink-0">
                                     +${info.times.length - 4}
                                 </span>
                             ` : ''}

@@ -103,31 +103,32 @@
 
         <!-- En-tête de l'application -->
         <header class="text-center mb-8">
-            <div class="flex justify-center items-center gap-4 mb-4">
-                <svg class="w-12 h-12 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <div class="flex justify-center items-center gap-3 sm:gap-4 mb-4">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5v-1.875a3.375 3.375 0 003.375-3.375h1.5a1.125 1.125 0 011.125 1.125v-1.5a3.375 3.375 0 00-3.375-3.375H3.375" />
                 </svg>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-50">
-                    Horaires des Bus EMT
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-50">
+                    <span class="hidden sm:inline">Horaires des Bus EMT</span>
+                    <span class="sm:hidden">Bus EMT Madrid</span>
                 </h1>
             </div>
-            <p class="text-slate-500 dark:text-slate-400 mb-4">
-                Consultez les temps d'attente en temps réel pour n'importe quel arrêt à Madrid.
+            <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-4 px-4">
+                Consultez les temps d'attente en temps réel<span class="hidden sm:inline"> pour n'importe quel arrêt à Madrid</span>.
             </p>
 
             <!-- Barre d'outils -->
-            <div class="flex justify-center items-center gap-4 flex-wrap">
+            <div class="flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
                 <!-- Theme Selector -->
                 <div class="relative">
                     <button
                         id="theme-toggle"
                         onclick="window.Utils.Theme.toggleDropdown()"
-                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                         aria-label="Sélectionner un thème"
                         title="Changer de thème">
                         <span class="theme-icon text-xl">☀️</span>
-                        <span class="theme-text text-sm font-medium hidden sm:inline">Clair</span>
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <span class="theme-text text-sm font-medium hidden md:inline">Clair</span>
+                        <svg class="w-4 h-4 hidden md:inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                         </svg>
                     </button>
@@ -135,7 +136,7 @@
                     <!-- Dropdown Menu -->
                     <div
                         id="theme-dropdown"
-                        class="hidden absolute top-full mt-2 left-0 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 min-w-[200px] z-50"
+                        class="hidden absolute top-full mt-2 right-0 sm:left-0 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 min-w-[200px] z-50"
                         role="menu"
                         aria-label="Menu de sélection de thème">
                         <button
@@ -179,26 +180,29 @@
 
                 <button
                     onclick="window.Favorites.shareFavorites()"
-                    class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] min-w-[44px] flex items-center justify-center gap-2"
                     title="Partager vos favoris"
                     aria-label="Partager vos favoris via un lien">
-                    🔗 Partager mes favoris
+                    <span class="text-xl">🔗</span>
+                    <span class="text-sm hidden md:inline">Partager</span>
                 </button>
 
                 <button
                     onclick="window.Utils.Geolocation.findNearbyStops()"
-                    class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] min-w-[44px] flex items-center justify-center gap-2"
                     title="Trouver des arrêts proches"
                     aria-label="Utiliser la géolocalisation pour trouver des arrêts proches">
-                    📍 Arrêts proches
+                    <span class="text-xl">📍</span>
+                    <span class="text-sm hidden md:inline">Proches</span>
                 </button>
 
                 <button
                     onclick="window.Utils.Notifications.requestPermission()"
-                    class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] min-w-[44px] flex items-center justify-center gap-2"
                     title="Activer les notifications"
                     aria-label="Activer les notifications pour les alertes de bus">
-                    🔔 Notifications
+                    <span class="text-xl">🔔</span>
+                    <span class="text-sm hidden md:inline">Notifications</span>
                 </button>
             </div>
         </header>
@@ -253,23 +257,23 @@
             <span id="search-help" class="sr-only">
                 Entrez un nom ou un numéro d'arrêt de bus pour consulter les horaires en temps réel. Des suggestions apparaîtront automatiquement.
             </span>
-            <p class="text-xs text-center text-slate-500 dark:text-slate-400 mt-2">
-                💡 Astuce: Tapez au moins 2 caractères pour voir les suggestions • <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded">Ctrl+K</kbd> pour rechercher
+            <p class="text-xs sm:text-sm text-center text-slate-500 dark:text-slate-400 mt-2">
+                💡 <span class="hidden sm:inline">Astuce: Tapez au moins 2 caractères pour voir les suggestions</span><span class="sm:hidden">Tapez pour voir les suggestions</span><span class="hidden md:inline"> • <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded">Ctrl+K</kbd> pour rechercher</span>
             </p>
         </form>
 
         <!-- Panneau de filtres -->
-        <div id="filters-panel" class="hidden mb-6 max-w-4xl mx-auto">
-            <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+        <div id="filters-panel" class="hidden mb-6 max-w-4xl mx-auto px-2 sm:px-0">
+            <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md p-3 sm:p-4">
+                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <span>🎛️</span>
-                        <span>Filtres</span>
+                        <span class="hidden sm:inline">Filtres</span>
                     </h3>
                     <button
                         id="filters-toggle"
                         onclick="window.Filters.toggle()"
-                        class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                        class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors min-h-[44px] px-3"
                         aria-label="Masquer les filtres">
                         <span id="filters-toggle-text">Masquer</span>
                     </button>
@@ -277,69 +281,71 @@
 
                 <div id="filters-content">
                     <!-- Filtre par temps d'attente -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                            ⏱️ Temps d'attente maximum
+                    <div class="mb-3 sm:mb-4">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="hidden sm:inline">⏱️ Temps d'attente maximum</span>
+                            <span class="sm:hidden">⏱️ Temps max</span>
                         </label>
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-1.5 sm:gap-2">
                             <button
                                 onclick="window.Filters.setMaxTime(null)"
-                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors active"
+                                class="filter-btn filter-time px-3 sm:px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors active text-xs sm:text-sm min-h-[44px]"
                                 data-time="all">
                                 Tous
                             </button>
                             <button
                                 onclick="window.Filters.setMaxTime(5)"
-                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                                class="filter-btn filter-time px-3 sm:px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors text-xs sm:text-sm min-h-[44px]"
                                 data-time="5">
-                                &lt; 5 min
+                                <span class="hidden sm:inline">&lt; </span>5<span class="hidden sm:inline"> min</span>
                             </button>
                             <button
                                 onclick="window.Filters.setMaxTime(10)"
-                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                                class="filter-btn filter-time px-3 sm:px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors text-xs sm:text-sm min-h-[44px]"
                                 data-time="10">
-                                &lt; 10 min
+                                <span class="hidden sm:inline">&lt; </span>10<span class="hidden sm:inline"> min</span>
                             </button>
                             <button
                                 onclick="window.Filters.setMaxTime(15)"
-                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                                class="filter-btn filter-time px-3 sm:px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors text-xs sm:text-sm min-h-[44px]"
                                 data-time="15">
-                                &lt; 15 min
+                                <span class="hidden sm:inline">&lt; </span>15<span class="hidden sm:inline"> min</span>
                             </button>
                         </div>
                     </div>
 
                     <!-- Filtre par ligne (généré dynamiquement) -->
-                    <div id="lines-filter" class="mb-4">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    <div id="lines-filter" class="mb-3 sm:mb-4">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                             🚌 Lignes
                         </label>
-                        <div id="lines-filter-buttons" class="flex flex-wrap gap-2">
+                        <div id="lines-filter-buttons" class="flex flex-wrap gap-1.5 sm:gap-2">
                             <!-- Généré dynamiquement -->
                         </div>
                     </div>
 
                     <!-- Filtre par destination -->
-                    <div class="mb-4">
-                        <label for="destination-filter" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                            📍 Destination (contient)
+                    <div class="mb-3 sm:mb-4">
+                        <label for="destination-filter" class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="hidden sm:inline">📍 Destination (contient)</span>
+                            <span class="sm:hidden">📍 Destination</span>
                         </label>
                         <input
                             type="text"
                             id="destination-filter"
                             placeholder="Ex: Centro, Plaza..."
-                            class="w-full px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
+                            class="w-full px-3 sm:px-4 py-2.5 sm:py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 text-sm min-h-[44px]"
                             oninput="window.Filters.setDestination(this.value)">
                     </div>
 
                     <!-- Boutons d'action -->
-                    <div class="flex gap-2 justify-end">
+                    <div class="flex gap-2 justify-end items-center">
                         <button
                             onclick="window.Filters.reset()"
-                            class="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                            class="px-3 sm:px-4 py-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors min-h-[44px]">
                             Réinitialiser
                         </button>
-                        <span id="filters-count" class="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+                        <span id="filters-count" class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400">
                             <!-- Compteur de résultats -->
                         </span>
                     </div>
@@ -374,21 +380,21 @@
         </main>
 
         <!-- Footer -->
-        <footer class="text-center mt-12 text-sm text-slate-400 dark:text-slate-500" role="contentinfo">
+        <footer class="text-center mt-12 text-xs sm:text-sm text-slate-400 dark:text-slate-500 px-4" role="contentinfo">
             <p>Données fournies par EMT Madrid.</p>
             <p class="mt-1">
-                Interface améliorée par Claude Code •
-                <a href="https://github.com/ssellini/EMT" class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">
+                <span class="hidden sm:inline">Interface améliorée par Claude Code • </span>
+                <a href="https://github.com/ssellini/EMT" class="text-blue-600 dark:text-blue-400 hover:underline min-h-[44px] inline-flex items-center" target="_blank" rel="noopener noreferrer">
                     Code source
                 </a>
             </p>
-            <p class="mt-2">
-                <strong>Note :</strong> Cette application utilise le "web scraping" et peut cesser de fonctionner si le site de l'EMT est mis à jour.
+            <p class="mt-2 text-xs sm:text-sm">
+                <strong>Note :</strong> <span class="hidden sm:inline">Cette application utilise le "web scraping" et peut cesser de fonctionner si le site de l'EMT est mis à jour.</span><span class="sm:hidden">Application utilisant le web scraping.</span>
             </p>
 
             <!-- Version et statut -->
             <div class="mt-4 text-xs">
-                <p>Version 2.0.0 • PWA activée</p>
+                <p><span class="hidden sm:inline">Version 2.0.0 • </span>PWA activée</p>
                 <p id="online-status" class="mt-1">
                     <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
                     En ligne
