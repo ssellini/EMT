@@ -117,14 +117,65 @@
 
             <!-- Barre d'outils -->
             <div class="flex justify-center items-center gap-4 flex-wrap">
-                <button
-                    id="dark-mode-toggle"
-                    onclick="window.Utils.DarkMode.toggle()"
-                    class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Basculer le mode sombre"
-                    title="Basculer le mode sombre (Ctrl+D)">
-                    🌙
-                </button>
+                <!-- Theme Selector -->
+                <div class="relative">
+                    <button
+                        id="theme-toggle"
+                        onclick="window.Utils.Theme.toggleDropdown()"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label="Sélectionner un thème"
+                        title="Changer de thème">
+                        <span class="theme-icon text-xl">☀️</span>
+                        <span class="theme-text text-sm font-medium hidden sm:inline">Clair</span>
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div
+                        id="theme-dropdown"
+                        class="hidden absolute top-full mt-2 left-0 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 min-w-[200px] z-50"
+                        role="menu"
+                        aria-label="Menu de sélection de thème">
+                        <button
+                            onclick="window.Utils.Theme.apply('light'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">☀️</span>
+                            <span class="text-sm font-medium">Clair</span>
+                        </button>
+                        <button
+                            onclick="window.Utils.Theme.apply('dark'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌙</span>
+                            <span class="text-sm font-medium">Sombre</span>
+                        </button>
+                        <hr class="my-2 border-slate-200 dark:border-slate-700">
+                        <button
+                            onclick="window.Utils.Theme.apply('sunset'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌅</span>
+                            <span class="text-sm font-medium">Coucher de soleil</span>
+                        </button>
+                        <button
+                            onclick="window.Utils.Theme.apply('ocean'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌊</span>
+                            <span class="text-sm font-medium">Océan</span>
+                        </button>
+                        <button
+                            onclick="window.Utils.Theme.apply('forest'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌲</span>
+                            <span class="text-sm font-medium">Forêt</span>
+                        </button>
+                    </div>
+                </div>
 
                 <button
                     onclick="window.Favorites.shareFavorites()"
@@ -158,35 +209,143 @@
         <!-- Section de l'historique -->
         <section id="history-container" aria-label="Historique de recherche"></section>
 
-        <!-- Formulaire de recherche -->
+        <!-- Formulaire de recherche avec autocomplete -->
         <form id="stop-form" class="mb-8 max-w-lg mx-auto" role="search">
-            <label for="stop-number-input" class="sr-only">
-                Numéro de l'arrêt de bus
+            <label for="stop-search-input" class="sr-only">
+                Nom ou numéro de l'arrêt de bus
             </label>
-            <div class="flex flex-col sm:flex-row items-center gap-2 shadow-lg rounded-lg p-2 bg-white dark:bg-slate-800">
-                <input
-                    type="number"
-                    id="stop-number-input"
-                    placeholder="Entrez le numéro de l'arrêt (ex: 5998)"
-                    required
-                    min="1"
-                    max="99999"
-                    aria-label="Numéro de l'arrêt de bus"
-                    aria-describedby="search-help"
-                    class="w-full sm:flex-1 appearance-none bg-transparent border-none text-lg text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 py-3 px-4 focus:outline-none">
-                <button
-                    type="submit"
-                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Rechercher
-                </button>
+            <div class="relative">
+                <div class="flex flex-col sm:flex-row items-center gap-2 shadow-lg rounded-lg p-2 bg-white dark:bg-slate-800">
+                    <div class="relative w-full sm:flex-1">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            🔍
+                        </span>
+                        <input
+                            type="text"
+                            id="stop-search-input"
+                            list="stops-suggestions"
+                            placeholder="Nom ou numéro d'arrêt (ex: Puerta del Sol)"
+                            required
+                            autocomplete="off"
+                            aria-label="Nom ou numéro de l'arrêt de bus"
+                            aria-describedby="search-help"
+                            aria-autocomplete="list"
+                            aria-controls="suggestions-dropdown"
+                            class="w-full appearance-none bg-transparent border-none text-lg text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 py-3 pl-10 pr-4 focus:outline-none">
+                        <datalist id="stops-suggestions">
+                            <!-- Généré dynamiquement par JavaScript -->
+                        </datalist>
+                    </div>
+                    <button
+                        type="submit"
+                        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Rechercher
+                    </button>
+                </div>
+
+                <!-- Dropdown de suggestions custom -->
+                <div id="suggestions-dropdown"
+                     class="hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-lg shadow-xl max-h-96 overflow-y-auto z-50 border border-slate-200 dark:border-slate-700"
+                     role="listbox">
+                    <!-- Généré dynamiquement -->
+                </div>
             </div>
             <span id="search-help" class="sr-only">
-                Entrez un numéro d'arrêt de bus à 4 ou 5 chiffres pour consulter les horaires en temps réel
+                Entrez un nom ou un numéro d'arrêt de bus pour consulter les horaires en temps réel. Des suggestions apparaîtront automatiquement.
             </span>
             <p class="text-xs text-center text-slate-500 dark:text-slate-400 mt-2">
-                💡 Astuce: Utilisez <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded">Ctrl+K</kbd> pour rechercher rapidement
+                💡 Astuce: Tapez au moins 2 caractères pour voir les suggestions • <kbd class="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded">Ctrl+K</kbd> pour rechercher
             </p>
         </form>
+
+        <!-- Panneau de filtres -->
+        <div id="filters-panel" class="hidden mb-6 max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <span>🎛️</span>
+                        <span>Filtres</span>
+                    </h3>
+                    <button
+                        id="filters-toggle"
+                        onclick="window.Filters.toggle()"
+                        class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                        aria-label="Masquer les filtres">
+                        <span id="filters-toggle-text">Masquer</span>
+                    </button>
+                </div>
+
+                <div id="filters-content">
+                    <!-- Filtre par temps d'attente -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            ⏱️ Temps d'attente maximum
+                        </label>
+                        <div class="flex flex-wrap gap-2">
+                            <button
+                                onclick="window.Filters.setMaxTime(null)"
+                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors active"
+                                data-time="all">
+                                Tous
+                            </button>
+                            <button
+                                onclick="window.Filters.setMaxTime(5)"
+                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                                data-time="5">
+                                &lt; 5 min
+                            </button>
+                            <button
+                                onclick="window.Filters.setMaxTime(10)"
+                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                                data-time="10">
+                                &lt; 10 min
+                            </button>
+                            <button
+                                onclick="window.Filters.setMaxTime(15)"
+                                class="filter-btn filter-time px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                                data-time="15">
+                                &lt; 15 min
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtre par ligne (généré dynamiquement) -->
+                    <div id="lines-filter" class="mb-4">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            🚌 Lignes
+                        </label>
+                        <div id="lines-filter-buttons" class="flex flex-wrap gap-2">
+                            <!-- Généré dynamiquement -->
+                        </div>
+                    </div>
+
+                    <!-- Filtre par destination -->
+                    <div class="mb-4">
+                        <label for="destination-filter" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            📍 Destination (contient)
+                        </label>
+                        <input
+                            type="text"
+                            id="destination-filter"
+                            placeholder="Ex: Centro, Plaza..."
+                            class="w-full px-4 py-2 rounded-md border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
+                            oninput="window.Filters.setDestination(this.value)">
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="flex gap-2 justify-end">
+                        <button
+                            onclick="window.Filters.reset()"
+                            class="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                            Réinitialiser
+                        </button>
+                        <span id="filters-count" class="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+                            <!-- Compteur de résultats -->
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Conteneur pour les résultats -->
         <main id="results-container" role="main" aria-live="polite" aria-atomic="false">
@@ -242,6 +401,8 @@
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script src="./js/favorites.js"></script>
+    <script src="./js/search.js"></script>
+    <script src="./js/filters.js"></script>
     <script src="./js/app.js"></script>
 
     <!-- Script pour gérer le statut en ligne/hors ligne -->
