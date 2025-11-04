@@ -134,50 +134,152 @@ const History = {
 };
 
 /**
- * Gestion du mode sombre
+ * Gestion des thèmes
  */
-const DarkMode = {
-    init() {
-        // Charger la préférence sauvegardée ou utiliser la préférence système
-        const saved = localStorage.getItem('darkMode');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const Theme = {
+    themes: {
+        light: {
+            name: 'Clair',
+            icon: '☀️',
+            classes: []
+        },
+        dark: {
+            name: 'Sombre',
+            icon: '🌙',
+            classes: ['dark']
+        },
+        sunset: {
+            name: 'Coucher de soleil',
+            icon: '🌅',
+            classes: ['theme-sunset']
+        },
+        ocean: {
+            name: 'Océan',
+            icon: '🌊',
+            classes: ['theme-ocean']
+        },
+        forest: {
+            name: 'Forêt',
+            icon: '🌲',
+            classes: ['theme-forest']
+        }
+    },
 
-        if (saved === 'true' || (saved === null && prefersDark)) {
-            this.enable();
+    currentTheme: 'light',
+    dropdownVisible: false,
+
+    init() {
+        // Charger la préférence sauvegardée
+        const saved = localStorage.getItem('theme');
+
+        // Si pas de préférence sauvegardée, détecter la préférence système
+        if (!saved) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            this.currentTheme = prefersDark ? 'dark' : 'light';
+        } else {
+            this.currentTheme = saved;
         }
 
-        // Écouter les changements de préférence système
+        this.apply(this.currentTheme);
+
+        // Écouter les changements de préférence système (uniquement si pas de préférence manuelle)
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (localStorage.getItem('darkMode') === null) {
-                e.matches ? this.enable() : this.disable();
+            if (!localStorage.getItem('theme')) {
+                this.apply(e.matches ? 'dark' : 'light');
+            }
+        });
+
+        // Gérer les clics en dehors du dropdown pour le fermer
+        document.addEventListener('click', (e) => {
+            const themeButton = document.getElementById('theme-toggle');
+            const dropdown = document.getElementById('theme-dropdown');
+
+            if (themeButton && dropdown && !themeButton.contains(e.target) && !dropdown.contains(e.target)) {
+                this.hideDropdown();
             }
         });
     },
 
+    apply(themeName) {
+        if (!this.themes[themeName]) return;
+
+        const html = document.documentElement;
+        const theme = this.themes[themeName];
+
+        // Retirer toutes les classes de thème
+        Object.values(this.themes).forEach(t => {
+            t.classes.forEach(cls => html.classList.remove(cls));
+        });
+
+        // Ajouter les nouvelles classes
+        theme.classes.forEach(cls => html.classList.add(cls));
+
+        this.currentTheme = themeName;
+        localStorage.setItem('theme', themeName);
+        this.updateButton();
+
+        console.log(`✅ Thème appliqué: ${theme.name}`);
+    },
+
     toggle() {
-        const isDark = document.documentElement.classList.contains('dark');
-        isDark ? this.disable() : this.enable();
+        // Simple toggle entre light et dark (pour compatibilité)
+        const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.apply(newTheme);
     },
 
-    enable() {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('darkMode', 'true');
-        this.updateButton();
+    toggleDropdown() {
+        this.dropdownVisible = !this.dropdownVisible;
+        const dropdown = document.getElementById('theme-dropdown');
+
+        if (dropdown) {
+            if (this.dropdownVisible) {
+                dropdown.classList.remove('hidden');
+                dropdown.classList.add('animate-fadeIn');
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
     },
 
-    disable() {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('darkMode', 'false');
-        this.updateButton();
+    hideDropdown() {
+        this.dropdownVisible = false;
+        const dropdown = document.getElementById('theme-dropdown');
+        if (dropdown) {
+            dropdown.classList.add('hidden');
+        }
     },
 
     updateButton() {
-        const button = document.getElementById('dark-mode-toggle');
+        const button = document.getElementById('theme-toggle');
         if (!button) return;
 
-        const isDark = document.documentElement.classList.contains('dark');
-        button.innerHTML = isDark ? '☀️' : '🌙';
-        button.setAttribute('aria-label', isDark ? 'Activer le mode clair' : 'Activer le mode sombre');
+        const theme = this.themes[this.currentTheme];
+        const iconSpan = button.querySelector('.theme-icon');
+        const textSpan = button.querySelector('.theme-text');
+
+        if (iconSpan) iconSpan.textContent = theme.icon;
+        if (textSpan) textSpan.textContent = theme.name;
+
+        button.setAttribute('aria-label', `Thème actuel: ${theme.name}. Cliquer pour changer de thème.`);
+    }
+};
+
+// Alias pour compatibilité avec l'ancien code
+const DarkMode = {
+    init() {
+        Theme.init();
+    },
+    toggle() {
+        Theme.toggle();
+    },
+    enable() {
+        Theme.apply('dark');
+    },
+    disable() {
+        Theme.apply('light');
+    },
+    updateButton() {
+        Theme.updateButton();
     }
 };
 
@@ -485,7 +587,8 @@ function setupErrorHandling() {
 window.Utils = {
     showToast,
     History,
-    DarkMode,
+    DarkMode, // Alias pour compatibilité
+    Theme,
     Geolocation,
     Notifications,
     formatTime,

@@ -117,14 +117,65 @@
 
             <!-- Barre d'outils -->
             <div class="flex justify-center items-center gap-4 flex-wrap">
-                <button
-                    id="dark-mode-toggle"
-                    onclick="window.Utils.DarkMode.toggle()"
-                    class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Basculer le mode sombre"
-                    title="Basculer le mode sombre (Ctrl+D)">
-                    🌙
-                </button>
+                <!-- Theme Selector -->
+                <div class="relative">
+                    <button
+                        id="theme-toggle"
+                        onclick="window.Utils.Theme.toggleDropdown()"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label="Sélectionner un thème"
+                        title="Changer de thème">
+                        <span class="theme-icon text-xl">☀️</span>
+                        <span class="theme-text text-sm font-medium hidden sm:inline">Clair</span>
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div
+                        id="theme-dropdown"
+                        class="hidden absolute top-full mt-2 left-0 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 min-w-[200px] z-50"
+                        role="menu"
+                        aria-label="Menu de sélection de thème">
+                        <button
+                            onclick="window.Utils.Theme.apply('light'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">☀️</span>
+                            <span class="text-sm font-medium">Clair</span>
+                        </button>
+                        <button
+                            onclick="window.Utils.Theme.apply('dark'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌙</span>
+                            <span class="text-sm font-medium">Sombre</span>
+                        </button>
+                        <hr class="my-2 border-slate-200 dark:border-slate-700">
+                        <button
+                            onclick="window.Utils.Theme.apply('sunset'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌅</span>
+                            <span class="text-sm font-medium">Coucher de soleil</span>
+                        </button>
+                        <button
+                            onclick="window.Utils.Theme.apply('ocean'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌊</span>
+                            <span class="text-sm font-medium">Océan</span>
+                        </button>
+                        <button
+                            onclick="window.Utils.Theme.apply('forest'); window.Utils.Theme.hideDropdown();"
+                            class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                            role="menuitem">
+                            <span class="text-xl">🌲</span>
+                            <span class="text-sm font-medium">Forêt</span>
+                        </button>
+                    </div>
+                </div>
 
                 <button
                     onclick="window.Favorites.shareFavorites()"
