@@ -173,3 +173,41 @@ input:focus-visible {
         animation-delay: 0s !important;
     }
 }
+
+/* Boutons de filtres */
+.filter-btn {
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.filter-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn:active {
+    transform: translateY(0);
+}
+
+.filter-btn.active {
+    font-weight: 600;
+}
+
+/* Dropdown de suggestions d'autocomplete */
+.suggestion-item {
+    cursor: pointer;
+}
+
+.suggestion-item:first-child {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.suggestion-item:last-child {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Mark pour le highlight des résultats de recherche */
+mark {
+    padding: 0 2px;
+    border-radius: 2px;
+}

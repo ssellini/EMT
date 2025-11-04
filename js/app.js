@@ -22,7 +22,8 @@ const DOM = {
 
     init() {
         this.stopForm = document.getElementById('stop-form');
-        this.stopInput = document.getElementById('stop-number-input');
+        // Utiliser le nouvel input de recherche avec autocomplete
+        this.stopInput = document.getElementById('stop-search-input') || document.getElementById('stop-number-input');
         this.initialMessage = document.getElementById('initial-message');
         this.loader = document.getElementById('loader');
         this.errorMessage = document.getElementById('error-message');
@@ -48,8 +49,9 @@ function init() {
     window.Favorites.renderFavorites();
     window.Utils.History.render();
 
-    // Gestionnaire du formulaire
-    DOM.stopForm.addEventListener('submit', handleFormSubmit);
+    // Note: Le gestionnaire du formulaire est maintenant géré par search.js
+    // pour supporter l'autocomplete avancé
+    // DOM.stopForm.addEventListener('submit', handleFormSubmit);
 
     // Raccourcis clavier
     setupKeyboardShortcuts();
@@ -165,7 +167,12 @@ function parseAndDisplayData(html, stopId, fromCache = false, expired = false) {
         busData[key].times.push(time);
     }
 
-    displayBusCards(busData);
+    // Utiliser les filtres si disponibles
+    if (window.Filters) {
+        window.Filters.setData(busData);
+    } else {
+        displayBusCards(busData);
+    }
 }
 
 /**
@@ -223,7 +230,64 @@ function displayStopInfo(stopName, address, stopId, fromCache, expired) {
 }
 
 /**
- * Afficher les cartes de bus
+ * Extraire les minutes depuis une chaîne de temps
+ */
+function extractMinutes(timeStr) {
+    if (!timeStr) return null;
+    const match = timeStr.match(/(\d+)/);
+    return match ? parseInt(match[1]) : null;
+}
+
+/**
+ * Déterminer l'urgence basée sur le temps d'attente
+ */
+function getUrgency(minutes) {
+    if (minutes === null) return 'normal';
+    if (minutes <= 2) return 'critical';  // Rouge
+    if (minutes <= 5) return 'soon';      // Orange
+    if (minutes <= 10) return 'normal';   // Bleu
+    return 'later';                        // Gris
+}
+
+/**
+ * Obtenir les couleurs selon l'urgence
+ */
+function getUrgencyColors(urgency) {
+    const colors = {
+        critical: {
+            bg: 'bg-gradient-to-br from-red-500 to-red-600',
+            text: 'text-red-600 dark:text-red-400',
+            badge: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300',
+            border: 'border-red-500 dark:border-red-600',
+            icon: '🚨'
+        },
+        soon: {
+            bg: 'bg-gradient-to-br from-orange-500 to-orange-600',
+            text: 'text-orange-600 dark:text-orange-400',
+            badge: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300',
+            border: 'border-orange-500 dark:border-orange-600',
+            icon: '⏰'
+        },
+        normal: {
+            bg: 'bg-gradient-to-br from-blue-500 to-blue-600',
+            text: 'text-blue-600 dark:text-blue-400',
+            badge: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+            border: 'border-blue-500 dark:border-blue-600',
+            icon: '🚌'
+        },
+        later: {
+            bg: 'bg-gradient-to-br from-slate-500 to-slate-600',
+            text: 'text-slate-600 dark:text-slate-400',
+            badge: 'bg-slate-100 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300',
+            border: 'border-slate-500 dark:border-slate-600',
+            icon: '🕐'
+        }
+    };
+    return colors[urgency] || colors.normal;
+}
+
+/**
+ * Afficher les cartes de bus avec améliorations visuelles
  */
 function displayBusCards(busData) {
     DOM.busCards.innerHTML = '';
@@ -231,38 +295,92 @@ function displayBusCards(busData) {
 
     Object.entries(busData).forEach(([key, info]) => {
         const card = document.createElement('div');
-        card.className = 'card-enter bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 focus-within:ring-2 focus-within:ring-blue-500';
+
+        // Déterminer l'urgence
+        const nextTime = info.times[0];
+        const minutes = extractMinutes(nextTime);
+        const urgency = getUrgency(minutes);
+        const colors = getUrgencyColors(urgency);
+
+        // Calculer la fréquence
+        const frequency = info.times.length;
+        const frequencyLabel = frequency >= 3 ? 'Fréquent' : frequency === 2 ? 'Modéré' : 'Rare';
+
+        card.className = `card-enter bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500 border-l-4 ${colors.border}`;
         card.style.animationDelay = `${delay}s`;
         card.setAttribute('role', 'article');
         card.setAttribute('aria-label', `Bus ligne ${info.line} vers ${info.destination}`);
-
-        const nextTime = info.times[0];
-        const otherTimes = info.times.slice(1).join(', ');
+        card.setAttribute('data-urgency', urgency);
 
         card.innerHTML = `
             <div class="p-6">
-                <div class="flex items-center gap-4">
-                    <span class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 dark:bg-blue-700 text-white font-bold text-xl" aria-hidden="true">
-                        ${info.line}
-                    </span>
-                    <div class="flex-1 min-w-0">
-                        <div class="tracking-wide text-sm text-blue-600 dark:text-blue-400 font-bold">
-                            Ligne ${info.line}
+                <!-- Header avec ligne et destination -->
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center justify-center h-12 w-12 rounded-full ${colors.bg} text-white font-bold text-xl shadow-lg" aria-hidden="true">
+                            ${info.line}
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <div class="tracking-wide text-xs ${colors.text} font-bold uppercase">
+                                Ligne ${info.line}
+                            </div>
+                            <p class="block mt-0.5 text-base leading-tight font-semibold text-slate-800 dark:text-slate-100 truncate" title="${info.destination}">
+                                ${info.destination}
+                            </p>
                         </div>
-                        <p class="block mt-1 text-lg leading-tight font-semibold text-black dark:text-white truncate" title="${info.destination}">
-                            ${info.destination}
-                        </p>
                     </div>
+                    <!-- Badge de fréquence -->
+                    ${frequency >= 2 ? `
+                        <span class="text-xs px-2 py-1 ${colors.badge} rounded-full font-semibold whitespace-nowrap">
+                            ${colors.icon} ${frequencyLabel}
+                        </span>
+                    ` : ''}
                 </div>
-                <div class="mt-6 text-center">
-                    <p class="text-slate-500 dark:text-slate-400 text-sm">Prochain passage dans</p>
-                    <p class="text-5xl font-bold text-slate-800 dark:text-slate-100 mt-2" aria-label="${nextTime}">
+
+                <!-- Temps principal -->
+                <div class="text-center py-4 mb-4 ${colors.badge} rounded-lg">
+                    <p class="text-sm ${colors.text} font-medium mb-1">Prochain passage</p>
+                    <p class="text-4xl font-bold ${colors.text}" aria-label="${nextTime}">
                         ${nextTime.replace('>', '&gt;')}
                     </p>
+                    ${urgency === 'critical' ? `
+                        <p class="text-xs ${colors.text} font-semibold mt-1 animate-pulse">
+                            Dépêchez-vous !
+                        </p>
+                    ` : urgency === 'soon' ? `
+                        <p class="text-xs ${colors.text} font-medium mt-1">
+                            Arrivée imminente
+                        </p>
+                    ` : ''}
                 </div>
-                ${otherTimes ? `
-                    <div class="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
-                        <span>Suivants: ${otherTimes}</span>
+
+                <!-- Timeline des prochains passages -->
+                ${info.times.length > 1 ? `
+                    <div class="space-y-2">
+                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">Passages suivants :</p>
+                        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+                            ${info.times.slice(0, 4).map((time, idx) => {
+                                const mins = extractMinutes(time);
+                                const timeUrgency = getUrgency(mins);
+                                const timeColors = getUrgencyColors(timeUrgency);
+
+                                return `
+                                    <div class="flex flex-col items-center gap-1 min-w-[60px]">
+                                        <div class="w-10 h-10 rounded-full ${timeColors.bg} flex items-center justify-center text-white text-xs font-bold shadow ${idx === 0 ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-800 ' + timeColors.border.replace('border-', 'ring-') : ''}">
+                                            ${time.replace('>', '')}
+                                        </div>
+                                        ${idx < info.times.length - 1 && idx < 3 ? `
+                                            <div class="h-1 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }).join('<div class="text-slate-300 dark:text-slate-600">→</div>')}
+                            ${info.times.length > 4 ? `
+                                <span class="text-xs text-slate-500 dark:text-slate-400 ml-2">
+                                    +${info.times.length - 4}
+                                </span>
+                            ` : ''}
+                        </div>
                     </div>
                 ` : ''}
             </div>
@@ -404,5 +522,6 @@ window.App = {
     refreshCurrentStop,
     toggleCurrentFavorite,
     startAutoRefresh,
-    stopAutoRefresh
+    stopAutoRefresh,
+    displayBusCards // Utilisé par le module Filters
 };
