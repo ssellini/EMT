@@ -148,14 +148,14 @@ const FiltersModule = {
         this.linesContainer.innerHTML = `
             <button
                 onclick="window.Filters.clearLines()"
-                class="filter-btn filter-line px-3 py-1.5 rounded-md border-2 border-slate-300 dark:border-slate-600 text-sm text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors ${this.filters.lines.length === 0 ? 'active bg-blue-600 dark:bg-blue-700 text-white border-blue-600 dark:border-blue-700' : ''}"
+                class="filter-btn filter-line px-3 sm:px-3 py-2 sm:py-1.5 rounded-md border-2 border-slate-300 dark:border-slate-600 text-xs sm:text-sm text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors min-h-[44px] sm:min-h-0 ${this.filters.lines.length === 0 ? 'active bg-blue-600 dark:bg-blue-700 text-white border-blue-600 dark:border-blue-700' : ''}"
                 data-line="all">
                 Toutes
             </button>
             ${sortedLines.map(line => `
                 <button
                     onclick="window.Filters.toggleLine('${line}')"
-                    class="filter-btn filter-line px-3 py-1.5 rounded-md border-2 border-slate-300 dark:border-slate-600 text-sm text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors ${this.filters.lines.includes(line) ? 'active bg-blue-600 dark:bg-blue-700 text-white border-blue-600 dark:border-blue-700' : ''}"
+                    class="filter-btn filter-line px-3 sm:px-3 py-2 sm:py-1.5 rounded-md border-2 border-slate-300 dark:border-slate-600 text-xs sm:text-sm text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors min-h-[44px] sm:min-h-0 min-w-[44px] sm:min-w-0 ${this.filters.lines.includes(line) ? 'active bg-blue-600 dark:bg-blue-700 text-white border-blue-600 dark:border-blue-700' : ''}"
                     data-line="${line}">
                     ${line}
                 </button>
