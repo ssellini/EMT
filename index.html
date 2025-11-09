@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="EMT Madrid">
 
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.codetabs.com https://api.allorigins.win https://corsproxy.io https://www.emtmadrid.es; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://openapi.emtmadrid.es https://api.codetabs.com https://api.allorigins.win https://corsproxy.io; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -404,6 +404,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script src="./js/favorites.js"></script>
