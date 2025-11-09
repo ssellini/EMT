@@ -45,3 +45,6 @@ yarn.lock
 
 # ESLint cache
 .eslintcache
+
+# Custom config files
+js/config.js
