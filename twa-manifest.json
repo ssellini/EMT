@@ -1,0 +1,33 @@
+{
+  "packageId": "com.sellini.emt",
+  "host": "ssellini.github.io",
+  "name": "EMT Madrid - Horaires Bus",
+  "launcherName": "EMT Madrid",
+  "display": "fullscreen",
+  "themeColor": "#2563eb",
+  "navigationBarColor": "#FFFFFF",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": true,
+  "startUrl": "/EMT/",
+  "iconUrl": "https://ssellini.github.io/EMT/icons/icon-512.png",
+  "splashScreen": {
+    "backgroundColor": "#FFFFFF",
+    "iconUrl": "https://ssellini.github.io/EMT/icons/icon-512.png",
+    "paddingFactor": 2
+  },
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://ssellini.github.io/EMT/manifest.json",
+  "fallbackType": "webview",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "signingKey": {
+    "path": "android.keystore",
+    "alias": "android"
+  },
+  "appVersionCode": 1,
+  "appVersion": "1.0.0",
+  "minSdkVersion": 21
+}
