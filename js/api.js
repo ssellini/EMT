@@ -1,4 +1,4 @@
-// js/api.js - Gestion des appels à l'API EMT Madrid avec fallback de web scraping
+// js/api.js - Gestion des appels à l'API EMT Madrid avec fallback de web scraping et gestion de token améliorée
 
 const API_BASE_URL = 'https://openapi.emtmadrid.es/v2/';
 const LOGIN_ENDPOINT = 'user/login/';
@@ -8,9 +8,9 @@ const ARRIVALS_ENDPOINT = (stopId) => `transport/busemtmad/stops/${stopId}/arriv
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 const cache = new Map();
 
-// Stockage du token
-let apiToken = null;
-let tokenExpiration = null;
+// Clés pour le localStorage
+const TOKEN_KEY = 'emt_api_token';
+const TOKEN_EXPIRATION_KEY = 'emt_api_token_expiration';
 
 // Services proxy pour le fallback
 const PROXY_SERVICES = [
@@ -37,6 +37,7 @@ const ERROR_MESSAGES = {
  * Fonction de login pour obtenir un token
  */
 async function login() {
+    console.time("API Login");
     console.log("Tentative de connexion à l'API EMT...");
     const url = API_BASE_URL + LOGIN_ENDPOINT;
 
@@ -56,18 +57,23 @@ async function login() {
         const data = await response.json();
 
         if (data.code === '00' && data.data.length > 0) {
-            apiToken = data.data[0].accessToken;
-            // Le token expire en `tokenSecsLife` secondes
+            const token = data.data[0].accessToken;
             const tokenLifetime = data.data[0].tokenSecsLife * 1000;
-            tokenExpiration = Date.now() + tokenLifetime;
-            console.log("✅ Connexion réussie, token obtenu.");
-            return apiToken;
+            const expirationTime = Date.now() + tokenLifetime;
+
+            localStorage.setItem(TOKEN_KEY, token);
+            localStorage.setItem(TOKEN_EXPIRATION_KEY, expirationTime);
+
+            console.log("✅ Connexion réussie, token stocké.");
+            return token;
         } else {
             throw new Error(data.description || ERROR_MESSAGES.AUTHENTICATION_FAILED);
         }
     } catch (error) {
         console.error("Erreur de connexion:", error);
         throw new Error(ERROR_MESSAGES.AUTHENTICATION_FAILED);
+    } finally {
+        console.timeEnd("API Login");
     }
 }
 
@@ -75,8 +81,12 @@ async function login() {
  * Vérifier si le token est valide et en obtenir un nouveau si besoin
  */
 async function getValidToken() {
-    if (apiToken && tokenExpiration && Date.now() < tokenExpiration - 60000) { // Marge de 1 minute
-        return apiToken;
+    const token = localStorage.getItem(TOKEN_KEY);
+    const expiration = localStorage.getItem(TOKEN_EXPIRATION_KEY);
+
+    if (token && expiration && Date.now() < parseInt(expiration) - 60000) { // Marge de 1 minute
+        console.log("Utilisation du token depuis le localStorage.");
+        return token;
     }
     return await login();
 }
@@ -93,7 +103,7 @@ async function fetchWithRetry(url, options, maxRetries = 2) {
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
-            const response = await fetch(url, { ...options, signal: AbortSignal.timeout(10000) });
+            const response = await fetch(url, { ...options, signal: AbortSignal.timeout(5000) }); // Délai d'attente réduit à 5 secondes
 
             if (response.ok) {
                 return response;
@@ -101,7 +111,8 @@ async function fetchWithRetry(url, options, maxRetries = 2) {
 
             if (response.status === 401) { // Non autorisé, le token a peut-être expiré
                 console.warn("Token non autorisé (401). Tentative de re-connexion...");
-                apiToken = null; // Forcer le re-login
+                localStorage.removeItem(TOKEN_KEY);
+                localStorage.removeItem(TOKEN_EXPIRATION_KEY);
                 throw new Error("Token expired");
             }
 
@@ -210,6 +221,7 @@ function parseScrapedData(html, stopId) {
  */
 async function fetchBusTimesWithScraping(stopId) {
     console.warn(`API échouée, tentative avec le web scraping pour l'arrêt ${stopId}...`);
+    console.time(`Scraping Stop ${stopId}`);
     const emtUrl = `https://www.emtmadrid.es/PMVVisor/pmv.aspx?stopnum=${stopId}&size=3`;
     const htmlContent = await fetchWithProxyFallback(emtUrl);
 
@@ -220,6 +232,7 @@ async function fetchBusTimesWithScraping(stopId) {
         throw new Error(ERROR_MESSAGES.INVALID_DATA);
     }
 
+    console.timeEnd(`Scraping Stop ${stopId}`);
     return parseScrapedData(htmlContent, stopId);
 }
 
@@ -228,6 +241,7 @@ async function fetchBusTimesWithScraping(stopId) {
  * Récupérer les horaires de bus via l'API (méthode principale)
  */
 async function fetchBusTimesWithApi(stopId) {
+    console.time(`API Stop ${stopId}`);
     const token = await getValidToken();
     const url = API_BASE_URL + ARRIVALS_ENDPOINT(stopId);
 
@@ -248,6 +262,7 @@ async function fetchBusTimesWithApi(stopId) {
     const data = await response.json();
 
     if (data.code === '00' && data.data.length > 0 && data.data[0].Arrive) {
+        console.timeEnd(`API Stop ${stopId}`);
         return parseApiResponse(data, stopId);
     } else if (data.code === '80' && data.description.includes("No existen datos")) {
         throw new Error(ERROR_MESSAGES.NOT_FOUND);
@@ -307,7 +322,7 @@ function parseApiResponse(apiResponse, stopId) {
 
     return {
         stopId: stopId,
-        stopName: stopInfo ? stopInfo.StopInfo : 'Nom inconnu',
+        stopName: stopInfo ? stopInfo.stopName : 'Nom inconnu',
         arrivals: arrivals.map(arr => ({
             line: arr.line,
             destination: arr.destination,
