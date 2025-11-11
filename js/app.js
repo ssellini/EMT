@@ -67,6 +67,7 @@ function formatArrivalTime(seconds) {
  * Rechercher un arrêt
  */
 async function searchStop(stopId) {
+    console.time("Total Search Time");
     stopAutoRefresh();
     DOM.initialMessage.classList.add('hidden');
     DOM.errorMessage.classList.add('hidden');
@@ -77,7 +78,9 @@ async function searchStop(stopId) {
 
     try {
         const data = await window.API.fetchBusTimes(stopId);
+        console.time("Data Parsing and Rendering");
         parseAndDisplayData(data, data.fromCache, data.expired);
+        console.timeEnd("Data Parsing and Rendering");
 
         if (AppState.currentStop) {
             window.Utils.History.add(AppState.currentStop);
@@ -90,6 +93,7 @@ async function searchStop(stopId) {
         showError(error.message || 'Une erreur est survenue');
     } finally {
         DOM.loader.classList.add('hidden');
+        console.timeEnd("Total Search Time");
     }
 }
 
