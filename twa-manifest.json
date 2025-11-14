@@ -1,0 +1,57 @@
+{
+  "packageId": "com.ssellini.emt",
+  "host": "ssellini.github.io",
+  "name": "Horaires Bus EMT Madrid",
+  "launcherName": "EMT Madrid",
+  "display": "standalone",
+  "themeColor": "#2563eb",
+  "navigationColor": "#2563eb",
+  "navigationColorDark": "#1e40af",
+  "navigationDividerColor": "#2563eb",
+  "navigationDividerColorDark": "#1e40af",
+  "backgroundColor": "#f8fafc",
+  "enableNotifications": false,
+  "startUrl": "/EMT/",
+  "iconUrl": "https://ssellini.github.io/EMT/icons/icon-512.png",
+  "maskableIconUrl": "https://ssellini.github.io/EMT/icons/icon-512.png",
+  "monochromeIconUrl": "https://ssellini.github.io/EMT/icons/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "emt-madrid-key"
+  },
+  "appVersionName": "2.0.0",
+  "appVersionCode": 20000,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://ssellini.github.io/EMT/manifest.json",
+  "fallbackType": "customtabs",
+  "enableSiteSettingsShortcut": true,
+  "orientation": "portrait",
+  "fingerprints": [
+    {
+      "name": "emt-madrid-key",
+      "value": "A8:30:A3:43:22:D3:E4:E9:E3:F6:05:96:6C:13:8E:97:6A:A2:E2:97:D8:E5:A8:62:FB:FC:7F:BE:1E:6A:9C:62"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersion": "2.0.0",
+  "minSdkVersion": 21,
+  "targetSdkVersion": 33,
+  "features": {
+    "locationDelegation": {
+      "enabled": false
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableShareTarget": false,
+  "shareTarget": {},
+  "isChromeOSOnly": false,
+  "isMetaQuest": false
+}

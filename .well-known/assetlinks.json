@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.ssellini.emt",
+    "sha256_cert_fingerprints": [
+      "A8:30:A3:43:22:D3:E4:E9:E3:F6:05:96:6C:13:8E:97:6A:A2:E2:97:D8:E5:A8:62:FB:FC:7F:BE:1E:6A:9C:62"
+    ]
+  }
+}]
