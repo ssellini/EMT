@@ -1,0 +1,27 @@
+# Android Keystore (SECURITY: Never commit this!)
+*.keystore
+*.jks
+android.keystore
+
+# Bubblewrap Build Output
+app-release-signed.apk
+app-release-unsigned.apk
+*.aab
+
+# Android Build Files
+.gradle/
+build/
+app/build/
+local.properties
+gradle/
+gradlew
+gradlew.bat
+
+# Android Studio
+.idea/
+*.iml
+.DS_Store
+
+# Logs
+build.log
+npm-debug.log*

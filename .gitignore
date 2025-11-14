@@ -48,3 +48,18 @@ yarn.lock
 
 # Custom config files
 js/config.js
+
+# Android / TWA (SECURITY CRITICAL)
+*.keystore
+*.jks
+android.keystore
+keystore-info.txt
+app-release-signed.apk
+app-release-unsigned.apk
+*.aab
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+local.properties
+build.log
